@@ -1,13 +1,47 @@
+/** @format */
+@import "./bootstrap.min.css";
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  position: relative;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
+}
+main {
+  min-height: 100vh;
+}
+button:focus {
+  outline: none;
+}
+button:disabled {
+  cursor: not-allowed;
+}
+.rating span {
+  margin-right: 4px;
+}
+h1 {
+  font-weight: 400;
+  font-size: 1.5rem;
+}
+h3 {
+  font-size: 1.2rem;
+  font-weight: 400;
+}
+.outline-none:focus {
+  outline: none !important;
+}
+.cursor-pointer:hover {
+  cursor: pointer;
 }
