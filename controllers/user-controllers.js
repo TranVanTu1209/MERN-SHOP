@@ -83,8 +83,8 @@ const updateUserProfile = asyncHandler(async (req, res) => {
       token: generateJwtToken(updatedUser._id),
     });
   } else {
-    res.status(401);
-    throw new Error("Invalid Email Or Password");
+    res.status(404);
+    throw new Error("Can not find user");
   }
 });
 
@@ -96,8 +96,61 @@ const getUsers = asyncHandler(async (req, res) => {
   const users = await User.find({}).select("-password");
   if (users) return res.json(users);
   else {
+    console.log("404");
     res.status(404);
     throw new Error("Can not find users");
+  }
+});
+
+// @desc delete user
+// @route DELETE /api/v1/users/:id
+// @access Private
+
+const deleteUser = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.id);
+  if (user) {
+    await user.remove();
+    return res.json({ msg: "Deleted user success" });
+  } else {
+    res.status(404);
+    throw new Error("Can not find user");
+  }
+});
+
+// @desc get user by id
+// @route GET /api/v1/users/:id
+// @access Private/admin
+
+const getUserById = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.id).select("-password");
+  if (user) return res.json(user);
+  else {
+    console.log("404");
+    res.status(404);
+    throw new Error("Can not find user");
+  }
+});
+
+// @desc update user by id
+// @route PUT /api/v1/users/:id
+// @access Private/admin
+
+const updateUserById = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.id);
+  if (user) {
+    user.name = req.body.name || user.name;
+    user.email = req.body.email || user.email;
+    user.isAdmin = req.body.isAdmin;
+    const updatedUser = await user.save();
+    return res.json({
+      _id: updatedUser._id,
+      email: updatedUser.email,
+      name: updatedUser.name,
+      isAdmin: updatedUser.isAdmin,
+    });
+  } else {
+    res.status(404);
+    throw new Error("Can not find user");
   }
 });
 
@@ -107,4 +160,7 @@ module.exports = {
   registerUser,
   updateUserProfile,
   getUsers,
+  deleteUser,
+  getUserById,
+  updateUserById,
 };

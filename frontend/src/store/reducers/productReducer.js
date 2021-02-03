@@ -27,6 +27,16 @@ export const productListReducer = (state = productListInitialState, action) => {
         loading: false,
         error: payload,
       };
+    case actionTypes.PRODUCT_DELETE_FROM_STATE:
+      return {
+        ...state,
+        products: state.products.filter((product) => product._id !== payload),
+      };
+    case actionTypes.PRODUCT_CREATE_ADD_TO_STATE:
+      return {
+        ...state,
+        products: [payload, ...state.products],
+      };
     default:
       return state;
   }
@@ -57,6 +67,58 @@ export const productDetailReducer = (
         error: null,
       };
     case actionTypes.PRODUCT_DETAIL_FAIL:
+      return {
+        ...state,
+        loading: false,
+        error: payload,
+      };
+    default:
+      return state;
+  }
+};
+
+export const productDeleteReducer = (state = {}, action) => {
+  const { type, payload } = action;
+  switch (type) {
+    case actionTypes.PRODUCT_DELETE_REQUEST:
+      return {
+        ...state,
+        loading: true,
+      };
+    case actionTypes.PRODUCT_DELETE_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        error: null,
+        success: true,
+      };
+    case actionTypes.PRODUCT_DELETE_FAIL:
+      return {
+        ...state,
+        loading: false,
+        error: payload,
+      };
+    default:
+      return state;
+  }
+};
+
+export const productCreateReducer = (state = {}, action) => {
+  const { type, payload } = action;
+  switch (type) {
+    case actionTypes.PRODUCT_CREATE_REQUEST:
+      return {
+        ...state,
+        loading: true,
+      };
+    case actionTypes.PRODUCT_CREATE_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        error: null,
+        success: true,
+      };
+    case actionTypes.PRODUCT_CREATE_FAIL:
       return {
         ...state,
         loading: false,

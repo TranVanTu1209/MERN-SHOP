@@ -35,6 +35,26 @@ const Header = () => {
                       <i className='fas fa-id-card-alt'></i> Profile
                     </NavDropdown.Item>
                   </LinkContainer>
+                  {userInfo.isAdmin && (
+                    <>
+                      <LinkContainer to='/admin/user-list' exact>
+                        <NavDropdown.Item>
+                          <i className='fas fa-users'></i> User list
+                        </NavDropdown.Item>
+                      </LinkContainer>
+                      <LinkContainer to='/admin/product-list' exact>
+                        <NavDropdown.Item>
+                          <i className='fab fa-product-hunt'></i> Product list
+                        </NavDropdown.Item>
+                      </LinkContainer>
+                      <LinkContainer to='/admin/order-list' exact>
+                        <NavDropdown.Item>
+                          <i className='fas fa-file-invoice-dollar'></i> Order
+                          list
+                        </NavDropdown.Item>
+                      </LinkContainer>
+                    </>
+                  )}
                   <NavDropdown.Item onClick={logoutHandler}>
                     <i className='fas fa-sign-out-alt'></i> Sign Out
                   </NavDropdown.Item>

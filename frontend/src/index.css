@@ -45,3 +45,13 @@ h3 {
 .cursor-pointer:hover {
   cursor: pointer;
 }
+
+.w-80px {
+  width: 80px;
+}
+
+@media (min-width: 768px) {
+  .w-50-lg {
+    width: 50%;
+  }
+}

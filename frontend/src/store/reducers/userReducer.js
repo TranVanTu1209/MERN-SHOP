@@ -113,3 +113,98 @@ export const userUpdateProfileReducer = (
       return state;
   }
 };
+
+export const userListReducer = (
+  state = { loading: true, users: [] },
+  action
+) => {
+  const { type, payload } = action;
+  switch (type) {
+    case actionTypes.USER_GET_LIST_REQUEST:
+      return {
+        ...state,
+        loading: true,
+      };
+    case actionTypes.USER_GET_LIST_SUCCESS:
+      return {
+        ...state,
+        users: payload,
+        loading: false,
+        error: null,
+      };
+    case actionTypes.USER_GET_LIST_FAILED:
+      return {
+        ...state,
+        loading: false,
+        error: payload,
+      };
+    case actionTypes.USER_GET_LIST_RESET:
+      return {
+        users: [],
+      };
+    case actionTypes.USER_DELETE_FROM_STATE:
+      return {
+        ...state,
+        users: state.users.filter((user) => user._id !== payload),
+      };
+    default:
+      return state;
+  }
+};
+
+export const userDeleteReducer = (state = {}, action) => {
+  const { type, payload } = action;
+  switch (type) {
+    case actionTypes.USER_DELETE_REQUEST:
+      return {
+        ...state,
+        loading: true,
+      };
+    case actionTypes.USER_DELETE_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        error: null,
+        success: true,
+      };
+    case actionTypes.USER_DELETE_FAILED:
+      return {
+        ...state,
+        loading: false,
+        error: payload,
+      };
+    default:
+      return state;
+  }
+};
+
+export const userUpdateReducer = (state = {}, action) => {
+  const { type, payload } = action;
+  switch (type) {
+    case actionTypes.USER_UPDATE_REQUEST:
+      return {
+        ...state,
+        loading: true,
+      };
+    case actionTypes.USER_UPDATE_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        success: true,
+        error: null,
+        message: "Updated user success",
+      };
+    case actionTypes.USER_UPDATE_FAILED:
+      return {
+        ...state,
+        loading: false,
+        error: payload,
+        success: false,
+        message: "",
+      };
+    case actionTypes.USER_UPDATE_RESET:
+      return {};
+    default:
+      return state;
+  }
+};

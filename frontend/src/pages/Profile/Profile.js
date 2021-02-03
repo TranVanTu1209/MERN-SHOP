@@ -21,14 +21,16 @@ const Profile = ({ history }) => {
   useEffect(() => {
     if (!userInfo) history.push("/login");
     else {
-      if (!profile) {
-        dispatch(getUserDetails("profile"));
-      } else {
-        setName(profile.name);
-        setEmail(profile.email);
-      }
+      dispatch(getUserDetails("profile"));
     }
-  }, [history, userInfo, dispatch, profile]);
+  }, [history, userInfo, dispatch]);
+
+  useEffect(() => {
+    if (profile) {
+      setName(profile.name);
+      setEmail(profile.email);
+    }
+  }, [profile]);
 
   const submitHandler = (e) => {
     e.preventDefault();
@@ -46,53 +48,56 @@ const Profile = ({ history }) => {
         {success && (
           <Message variant='success'>Update Profile Successfully</Message>
         )}
-        <Form onSubmit={submitHandler}>
-          <Form.Group controlId='name'>
-            <Form.Label>User name</Form.Label>
-            <Form.Control
-              type='text'
-              placeholder='Enter your name'
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            ></Form.Control>
-          </Form.Group>
-          <Form.Group controlId='email'>
-            <Form.Label>Email Address</Form.Label>
-            <Form.Control
-              type='email'
-              placeholder='Enter email'
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            ></Form.Control>
-          </Form.Group>
-          <Form.Group controlId='password'>
-            <Form.Label>Password</Form.Label>
-            <Form.Control
-              type='password'
-              placeholder='Enter password'
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            ></Form.Control>
-          </Form.Group>
-          <Form.Group controlId='confirmPassword'>
-            <Form.Label>Confirm Password</Form.Label>
-            <Form.Control
-              type='password'
-              placeholder='Confirm password'
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-            ></Form.Control>
-          </Form.Group>
-          <Button type='submit'>Update Profile</Button>
-        </Form>
-        <Link to='/' className='btn btn-light mt-3'>
-          Back to shopping
-        </Link>
+        {!loading && !error && (
+          <Form onSubmit={submitHandler}>
+            <Form.Group controlId='name'>
+              <Form.Label>User name</Form.Label>
+              <Form.Control
+                type='text'
+                placeholder='Enter your name'
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              ></Form.Control>
+            </Form.Group>
+            <Form.Group controlId='email'>
+              <Form.Label>Email Address</Form.Label>
+              <Form.Control
+                type='email'
+                placeholder='Enter email'
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              ></Form.Control>
+            </Form.Group>
+            <Form.Group controlId='password'>
+              <Form.Label>Password</Form.Label>
+              <Form.Control
+                type='password'
+                placeholder='Enter password'
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              ></Form.Control>
+            </Form.Group>
+            <Form.Group controlId='confirmPassword'>
+              <Form.Label>Confirm Password</Form.Label>
+              <Form.Control
+                type='password'
+                placeholder='Confirm password'
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              ></Form.Control>
+            </Form.Group>
+            <Button type='submit' block>
+              Update Profile
+            </Button>
+          </Form>
+        )}
+        {!userInfo.isAdmin && (
+          <Link to='/' className='btn btn-light mt-3'>
+            Back to shopping
+          </Link>
+        )}
       </Col>
-      <Col md={9}>
-        <h3 className='my-3'>My Orders</h3>
-        <MyOrders />
-      </Col>
+      <Col md={9}>{userInfo.isAdmin ? null : <MyOrders />}</Col>
     </Row>
   );
 };

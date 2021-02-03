@@ -14,6 +14,7 @@ const MyOrders = () => {
   }, [dispatch]);
   return (
     <>
+      <h3 className='my-3'>My Orders</h3>
       {loading && <Loader />}
       {error && <Message variant='danger'> {error} </Message>}
       {!loading && !error && (

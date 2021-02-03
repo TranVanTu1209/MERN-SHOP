@@ -10,6 +10,7 @@ import Footer from "./components/Footer/Footer";
 import GoTop from "./components/GoTop";
 import Header from "./components/Header/Header";
 import Cart from "./pages/Cart/Cart";
+import EditUser from "./pages/EditUser";
 import Home from "./pages/Home/Home";
 import Login from "./pages/Login/Login";
 import OrderDetail from "./pages/OrderDetail/OrderDetail";
@@ -19,7 +20,8 @@ import Product from "./pages/Product/Product";
 import Profile from "./pages/Profile/Profile";
 import Register from "./pages/Register/Register";
 import Shipping from "./pages/Shipping/Shipping";
-import axios from "./store/axios";
+import UserList from "./pages/UserList";
+import ProductList from "./pages/ProductList";
 
 const App = () => {
   return (
@@ -38,6 +40,9 @@ const App = () => {
             <Route path='/payment' component={PaymentMethod} />
             <Route path='/placeorder' component={PlaceOrder} />
             <Route path='/orders/:id' component={OrderDetail} />
+            <Route path='/admin/user-list' component={UserList} />
+            <Route path='/admin/product-list' component={ProductList} />
+            <Route path='/admin/user/:id' component={EditUser} />
             <Route render={() => <Redirect to='/' />} />
           </Switch>
         </Container>
