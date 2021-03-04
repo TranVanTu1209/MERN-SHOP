@@ -1,26 +1,7 @@
 const mongoose = require("mongoose");
-
+const User = require("./User");
 const Schema = mongoose.Schema;
-
-const ReviewSchema = new Schema(
-  {
-    name: {
-      type: String,
-      required: true,
-    },
-    rating: {
-      type: Number,
-      required: true,
-    },
-    comment: {
-      type: String,
-      required: true,
-    },
-  },
-  { timestamps: true }
-);
-
-const Review = mongoose.model("Review", ReviewSchema);
+const Review = require('./Order');
 
 const ProductSchema = new Schema({
   user: {

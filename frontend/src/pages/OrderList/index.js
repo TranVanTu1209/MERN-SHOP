@@ -1,30 +1,44 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getMyOrders } from "../../store/actions/order";
-import { Link } from "react-router-dom";
-import Loader from "../Loader/Loader";
-import Message from "../Message/Message";
+import { getOrdersList, deliverOrder } from "../../store/actions/order";
+import { Link, useHistory } from "react-router-dom";
+import Loader from "../../components/Loader/Loader";
+import Message from "../../components/Message/Message";
 import Table from "react-bootstrap/Table";
 
-const MyOrders = () => {
-  const { loading, error, orders } = useSelector((state) => state.orderListMy);
+const OrdersList = () => {
+  const history = useHistory();
+  const { loading, error, orders } = useSelector((state) => state.orderList);
+  const { userInfo } = useSelector((state) => state.user);
+  const orderMarkAsDelivered = useSelector(
+    (state) => state.orderMarkAsDelivered
+  );
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(getMyOrders());
+    if (!userInfo) {
+      history.push("/login");
+    }
+  });
+  useEffect(() => {
+    dispatch(getOrdersList());
   }, [dispatch]);
   return (
     <>
-      <h3 className='my-3'>My Orders</h3>
-      {loading && <Loader />}
+      <h3 className='my-3'>Orders</h3>
+      {(loading || orderMarkAsDelivered.loading) && <Loader />}
       {error && <Message variant='danger'> {error} </Message>}
+      {orderMarkAsDelivered.error && (
+        <Message variant='danger'> {orderMarkAsDelivered.error} </Message>
+      )}
       {!loading && !error && (
         <Table striped bordered hover responsive className='table-sm'>
           <thead>
             <tr>
               <th>ID</th>
+              <th>User</th>
               <th>Date</th>
-              <th>Total</th>
-              <th>Paid</th>
+              <th>Total Price</th>
+              <th>Paid Info</th>
               <th>Delivered</th>
               <th></th>
             </tr>
@@ -33,6 +47,7 @@ const MyOrders = () => {
             {orders.map((order) => (
               <tr key={order._id}>
                 <td> {order._id} </td>
+                <td> {order.user && order.user.name} </td>
                 <td> {order.createdAt.substr(0, 10)} </td>
                 <td>$ {order.totalPrice.toFixed(2)} </td>
                 <td>
@@ -50,7 +65,13 @@ const MyOrders = () => {
                       Delivered at {order.deliveredAt.substr(0, 10)}
                     </span>
                   ) : (
-                    <span className='text-danger'>Not Delivered Yet</span>
+                    <button
+                      className='btn btn-success btn-sm'
+                      disabled={orderMarkAsDelivered.loading || !order.isPaid}
+                      onClick={() => dispatch(deliverOrder(order._id))}
+                    >
+                      Deliver Order
+                    </button>
                   )}
                 </td>
                 <td>
@@ -70,4 +91,4 @@ const MyOrders = () => {
   );
 };
 
-export default MyOrders;
+export default OrdersList;

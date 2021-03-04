@@ -3,7 +3,9 @@ const dotenv = require("dotenv");
 const colors = require("colors");
 const bodyParser = require("body-parser");
 const connectDB = require("./config/db");
-const cors = require('cors');
+const cors = require("cors");
+const path = require("path");
+const morgan = require("morgan");
 const {
   errorHandler,
   notFoundHandler,
@@ -15,6 +17,10 @@ const app = express();
 app.use(bodyParser.json({ extended: false }));
 app.use(cors());
 
+if (process.env.NODE_ENV === "development") {
+  app.use(morgan("dev"));
+}
+
 connectDB();
 
 app.get("/", (req, res) => {
@@ -24,6 +30,9 @@ app.get("/", (req, res) => {
 app.use("/api/v1/products", require("./routes/products"));
 app.use("/api/v1/users", require("./routes/users"));
 app.use("/api/v1/orders", require("./routes/orders"));
+app.use("/api/v1/upload", require("./routes/upload"));
+
+app.use("/uploads", express.static(path.join(__dirname, "/uploads")));
 
 app.get("/api/v1/config/paypal", (req, res) =>
   res.send(process.env.PAYPAL_CLIENT_ID)

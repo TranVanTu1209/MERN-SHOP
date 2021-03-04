@@ -17,9 +17,11 @@ export const productListReducer = (state = productListInitialState, action) => {
     case actionTypes.PRODUCT_LIST_SUCCESS:
       return {
         ...state,
-        products: payload,
+        products: payload.products,
         loading: false,
         error: null,
+        pages: payload.pages,
+        page: payload.page,
       };
     case actionTypes.PRODUCT_LIST_FAIL:
       return {
@@ -72,6 +74,11 @@ export const productDetailReducer = (
         loading: false,
         error: payload,
       };
+    case actionTypes.PRODUCT_CREATE_REVIEW_IN_STATE:
+      return {
+        loading: false,
+        product: payload,
+      };
     default:
       return state;
   }
@@ -119,6 +126,68 @@ export const productCreateReducer = (state = {}, action) => {
         success: true,
       };
     case actionTypes.PRODUCT_CREATE_FAIL:
+      return {
+        ...state,
+        loading: false,
+        error: payload,
+      };
+    default:
+      return state;
+  }
+};
+
+export const productUpdateReducer = (
+  state = {
+    loading: false,
+  },
+  action
+) => {
+  const { type, payload } = action;
+  switch (type) {
+    case actionTypes.PRODUCT_UPDATE_REQUEST:
+      return {
+        ...state,
+        loading: true,
+      };
+    case actionTypes.PRODUCT_UPDATE_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        error: null,
+        success: true,
+      };
+    case actionTypes.PRODUCT_UPDATE_FAIL:
+      return {
+        ...state,
+        loading: false,
+        error: payload,
+      };
+    default:
+      return state;
+  }
+};
+
+export const productCreateReviewReducer = (
+  state = {
+    loading: false,
+  },
+  action
+) => {
+  const { type, payload } = action;
+  switch (type) {
+    case actionTypes.PRODUCT_CREATE_REVIEW_REQUEST:
+      return {
+        ...state,
+        loading: true,
+      };
+    case actionTypes.PRODUCT_CREATE_REVIEW_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        error: null,
+        success: true,
+      };
+    case actionTypes.PRODUCT_CREATE_REVIEW_FAIL:
       return {
         ...state,
         loading: false,

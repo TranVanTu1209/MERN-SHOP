@@ -44,11 +44,15 @@ const getOrderById = asyncHandler(async (req, res) => {
     "name email"
   );
   if (order) {
-    if (req.user.id.toString() !== order.user._id.toString()) {
+    if (
+      req.user.id.toString() === order.user._id.toString() ||
+      req.user.isAdmin
+    ) {
+      res.json(order);
+    } else {
       res.status(401);
       throw new Error("Permission Denied. Can not access this order");
     }
-    res.json(order);
   } else {
     res.status(404);
     throw new Error("Order not found");
@@ -96,4 +100,42 @@ const getMyOrders = asyncHandler(async (req, res) => {
   }
 });
 
-module.exports = { createOrder, getOrderById, updateOrderToPaid, getMyOrders };
+// @desc get all orders
+// @route GET /api/v1/orders
+// @access private/admin
+
+const getAllOrders = asyncHandler(async (req, res) => {
+  const orders = await Order.find({}).populate("user", "id name email");
+  if (orders) {
+    res.json(orders);
+  } else {
+    res.status(404);
+    throw new Error("Orders not found");
+  }
+});
+
+// @desc mark order as delivered
+// @route PUT /api/v1/orders/:id/deliver
+// @access private/admin
+
+const markOrderAsDelivered = asyncHandler(async (req, res) => {
+  const order = await Order.findById(req.params.id);
+  if (order) {
+    order.isDelivered = true;
+    order.deliveredAt = Date.now();
+    const updatedOrder = await order.save();
+    res.json(updatedOrder);
+  } else {
+    res.status(404);
+    throw new Error("Order not found");
+  }
+});
+
+module.exports = {
+  createOrder,
+  getOrderById,
+  updateOrderToPaid,
+  getMyOrders,
+  getAllOrders,
+  markOrderAsDelivered,
+};

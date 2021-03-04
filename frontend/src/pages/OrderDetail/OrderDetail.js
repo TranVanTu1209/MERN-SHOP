@@ -6,7 +6,11 @@ import { PayPalButton } from "react-paypal-button-v2";
 import { Row, Col, ListGroup, Image, Card } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useHistory } from "react-router-dom";
-import { getOrderDetail, payOrder } from "../../store/actions/order";
+import {
+  deliverOrder,
+  getOrderDetail,
+  payOrder,
+} from "../../store/actions/order";
 import { addPayPalScript } from "../../utils/paypal";
 import { ORDER_PAY_RESET } from "../../store/actions/types";
 
@@ -16,7 +20,17 @@ const OrderDetail = ({ match }) => {
   const dispatch = useDispatch();
   const history = useHistory();
   const { loading, order, error } = useSelector((state) => state.orderDetail);
+  const { userInfo } = useSelector((state) => state.user);
   const orderPay = useSelector((state) => state.orderPay);
+  const orderMarkAsDelivered = useSelector(
+    (state) => state.orderMarkAsDelivered
+  );
+
+  useEffect(() => {
+    if (!userInfo) {
+      history.push("/login");
+    }
+  });
 
   useEffect(() => {
     if (orderId) {
@@ -64,14 +78,13 @@ const OrderDetail = ({ match }) => {
   const totalPrice = itemsPrice + shippingPrice + taxPrice;
 
   const successPaymentHandler = (paymentResult) => {
-    console.log(paymentResult);
     dispatch(payOrder(orderId, paymentResult));
   };
   return (
     <>
       {loading && <Loader />}
       {error && <Message variant='danger'> {error} </Message>}
-      {order && order.user && (
+      {order && order.user && !loading && (
         <>
           <h1 className='ml-4'>Order : {order._id} </h1>
           <Row>
@@ -97,7 +110,26 @@ const OrderDetail = ({ match }) => {
                       Delivered on {order.deliveredAt.substr(0, 10)}
                     </Message>
                   ) : (
-                    <Message variant='danger'>Not delivered yet</Message>
+                    <>
+                      {userInfo.isAdmin && order.isPaid ? (
+                        <button
+                          className='btn btn-success btn-sm'
+                          onClick={() => dispatch(deliverOrder(order._id))}
+                          disabled={orderMarkAsDelivered.loading}
+                        >
+                          {orderMarkAsDelivered.loading
+                            ? "Delivering"
+                            : "Mark As Delivered"}
+                        </button>
+                      ) : (
+                        <Message variant='danger'>Not delivered yet</Message>
+                      )}
+                      {orderMarkAsDelivered.error && (
+                        <Message variant='danger'>
+                          {orderMarkAsDelivered.error}
+                        </Message>
+                      )}
+                    </>
                   )}
                 </ListGroup.Item>
                 <ListGroup.Item>
@@ -178,19 +210,20 @@ const OrderDetail = ({ match }) => {
                     </Row>
                   </ListGroup.Item>
                   <ListGroup.Item>
-                    {!order.isPaid && (
-                      <>
-                        {orderPay.loading && <Loader />}
-                        {!sdkReady || orderPay.loading ? (
-                          <Loader />
-                        ) : (
-                          <PayPalButton
-                            amount={order.totalPrice.toFixed(2)}
-                            onSuccess={successPaymentHandler}
-                          />
-                        )}
-                      </>
-                    )}
+                    {!order.isPaid &&
+                      !userInfo.isAdmin(
+                        <>
+                          {orderPay.loading && <Loader />}
+                          {!sdkReady || orderPay.loading ? (
+                            <Loader />
+                          ) : (
+                            <PayPalButton
+                              amount={order.totalPrice.toFixed(2)}
+                              onSuccess={successPaymentHandler}
+                            />
+                          )}
+                        </>
+                      )}
                   </ListGroup.Item>
                 </ListGroup>
               </Card>

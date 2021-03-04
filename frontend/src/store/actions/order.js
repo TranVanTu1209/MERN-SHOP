@@ -148,3 +148,80 @@ export const getMyOrders = () => async (dispatch, getState) => {
     });
   }
 };
+
+export const getOrdersList = () => async (dispatch, getState) => {
+  dispatch({
+    type: actionTypes.ORDER_GET_LIST_REQUEST,
+  });
+  const {
+    userInfo: { token },
+  } = getState().user;
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  try {
+    const res = await axios.get(`/api/v1/orders`, config);
+    dispatch({
+      type: actionTypes.ORDER_GET_LIST_SUCCESS,
+      payload: res.data,
+    });
+  } catch (error) {
+    if (error.response && error.response.data) {
+      dispatch(
+        logoutUserWhenExpired(error.response.data.msg, error.response.status)
+      );
+    }
+    dispatch({
+      type: actionTypes.ORDER_GET_LIST_FAILED,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    });
+  }
+};
+
+export const deliverOrder = (orderId) => async (dispatch, getState) => {
+  dispatch({
+    type: actionTypes.ORDER_MARK_AS_DELIVERED_REQUEST,
+  });
+  const {
+    userInfo: { token },
+  } = getState().user;
+  const config = {
+    headers: {
+      "Content-type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  try {
+    const res = await axios.put(
+      `/api/v1/orders/${orderId}/deliver`,
+      null,
+      config
+    );
+    dispatch({
+      type: actionTypes.ORDER_MARK_AS_DELIVERED_SUCCESS,
+      payload: res.data,
+    });
+    dispatch({
+      type: actionTypes.ORDER_MARK_AS_DELIVERED_RESET,
+      payload: { id: orderId, order: res.data },
+    });
+  } catch (error) {
+    if (error.response && error.response.data) {
+      dispatch(
+        logoutUserWhenExpired(error.response.data.msg, error.response.status)
+      );
+    }
+    dispatch({
+      type: actionTypes.ORDER_MARK_AS_DELIVERED_FAILED,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    });
+  }
+};

@@ -22,6 +22,8 @@ import Register from "./pages/Register/Register";
 import Shipping from "./pages/Shipping/Shipping";
 import UserList from "./pages/UserList";
 import ProductList from "./pages/ProductList";
+import EditProduct from "./pages/EditProduct";
+import OrdersList from "./pages/OrderList";
 
 const App = () => {
   return (
@@ -31,6 +33,13 @@ const App = () => {
         <Container>
           <Switch>
             <Route exact path='/' component={Home} />
+            <Route
+              exact
+              path='/search/:keywords/page/:pageNumber'
+              component={Home}
+            />
+            <Route exact path='/search/:keywords' component={Home} />
+            <Route path='/page/:pageNumber' component={Home} />
             <Route path='/product/:pId' component={Product} />
             <Route path='/cart/:id?' component={Cart} />
             <Route path='/login' component={Login} />
@@ -41,8 +50,15 @@ const App = () => {
             <Route path='/placeorder' component={PlaceOrder} />
             <Route path='/orders/:id' component={OrderDetail} />
             <Route path='/admin/user-list' component={UserList} />
+            <Route
+              exact
+              path='/admin/product-list/page/:pageNumber'
+              component={ProductList}
+            />
             <Route path='/admin/product-list' component={ProductList} />
+            <Route path='/admin/product/:id' component={EditProduct} />
             <Route path='/admin/user/:id' component={EditUser} />
+            <Route path='/admin/order-list' component={OrdersList} />
             <Route render={() => <Redirect to='/' />} />
           </Switch>
         </Container>

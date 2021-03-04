@@ -77,7 +77,7 @@ const EditUser = () => {
             />
           </Form.Group>
           <Button disabled={loading || userUpdate.loading} type='submit'>
-            Update User
+            {userUpdate.loading ? "Updating User..." : "Update User"}
           </Button>
         </Form>
       )}

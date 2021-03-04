@@ -22,7 +22,7 @@ const protect = async (req, res, next) => {
     return res.status(500).json({ msg: "Server error when finding user" });
   }
   if (!user) return res.status(404).json({ msg: "Can not find user" });
-  req.user = { id: decoded.id, isAdmin: user.isAdmin };
+  req.user = { id: decoded.id, isAdmin: user.isAdmin, name: user.name };
   next();
 };
 
